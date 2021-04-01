@@ -309,7 +309,5 @@ class comptableController extends Controller
 
 
 
-    function test($id, $mois){
-        dd('hello World !! MOUAHAHAHAHAHAHHA' . $id . $mois);
-    }
+  
 }

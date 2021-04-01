@@ -69,18 +69,19 @@ class PdoGsb{
 		$lesMois =array();
 		$laLigne = $res->fetch();
 		while($laLigne != null)	{		//Ici on arpente le resultat ($res) ligne par ligne
-			$mois = $laLigne['mois'];		//d'abord on découpe la ligne avec substr pour isoler l'année et le mois
+			$mois = $laLigne["mois"];//d'abord on découpe la ligne avec substr pour isoler l'année et le mois
 			$numAnnee =substr( $mois,0,4);
 			$numMois =substr( $mois,4,2);
-			$lesMois['$mois']=array(		//ensuite on charge le tableau $lesMois avec un autre tableau (l'indice pour accéder au second tableau sera ['mois']). la plupart du temps on arpentera le premier tableau avec un foreach $lesMois as $mois, ensuite on prendra $mois['mois'] pour obtenir la valeur 201001 par exemple)
+			$lesMois["$mois"]=array(		//ensuite on charge le tableau $lesMois avec un autre tableau (l'indice pour accéder au second tableau sera ['mois']). la plupart du temps on arpentera le premier tableau avec un foreach $lesMois as $mois, ensuite on prendra $mois['mois'] pour obtenir la valeur 201001 par exemple)
 		     "mois"=>"$mois",
 		    "numAnnee"  => "$numAnnee",
 			"numMois"  => "$numMois"
-             );
-			$laLigne = $res->fetch(); 		
+            );
+			$laLigne = $res->fetch(); 
 		}
 		return $lesMois;
 	}
+	
 
 	//On récupere le nom du visiteur dans la bdd
 	public function getNomVisiteur($id){
