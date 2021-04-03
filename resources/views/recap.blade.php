@@ -13,22 +13,22 @@
 
     <p>
         <label name = "libelle">Forfait Etape</label>
-        <div class="centrer"> : {{ $saisieETP }}</div>
+        <div class="centrer"> : {{ $ETP }}</div>
     </p>
 
     <p>
         <label name = "libelle">Frais Kilométrique</label>
-        <div class="centrer"> : {{ $saisieKM }}</div>
+        <div class="centrer"> : {{ $KM }}</div>
     </p>
 
     <p>
         <label name = "libelle">Nuitée Hôtel</label>
-        <div class="centrer"> : {{ $saisieNUI }}</div>
+        <div class="centrer"> : {{ $NUI }}</div>
     </p>
 
     <p>
         <label name = "libelle">Repas Restaurant</label>
-        <div class="centrer"> : {{ $saisieREP }}</div>
+        <div class="centrer"> : {{ $REP }}</div>
     </p>
 
     <div> <b>TOTAL</b>  {{ $total }} €</div>
@@ -40,7 +40,6 @@
 
 </div>
 </form>
-<!-- <a href="{{url('test/' . $id . '/' . $mois)}}"><button>Annuler</button></a>     -->
 
 @endsection
 

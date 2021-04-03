@@ -39,10 +39,7 @@ Route :: post('enregistrerValidation',[ //on enregistre les nouvelles quantités
         'as'=>'chemin_enregistrerValidation',
         'uses'=>'comptableController@enregistrerValidation'
 ]);
-// Route :: get('test/{id}/{mois}',[
-//         'as'=>'chemin_test',
-//         'uses'=>'comptableController@test'
-// ]);
+
 Route :: get('deconnexion', [
         'as'=>'chemin_deconnexion',
         'uses'=>'connexionController@deconnecter'

@@ -8,10 +8,6 @@
         <input name="id" type="hidden" value="{{ $id }}"/>
         <input name="mois" type="hidden" value="{{ $mois }}"/>
         
-        <input name="ETP" type="hidden" value="{{ $ETP }}"/>
-        <input name="KM" type="hidden" value="{{ $KM }}"/>
-        <input name="NUI" type="hidden" value="{{ $NUI }}"/>
-        <input name="REP" type="hidden" value="{{ $REP }}"/>
 
         <div class="corpsForm">
             <legend>Eléments forfaitisés</legend>

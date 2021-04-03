@@ -80,6 +80,7 @@ class PdoGsb{
 			$laLigne = $res->fetch(); 
 		}
 		return $lesMois;
+		
 	}
 	
 
@@ -101,7 +102,7 @@ class PdoGsb{
 
 	// On récupere l'état d'une fiche de frais avec l'id et le mois
 	public function getEtatFrais($id, $mois){
-		$req = "select idEtat from fichefrais where  idVisiteur = '" .  $id  . "'  and  mois =  '" . $mois . "'";
+		$req = "select idEtat from fichefrais where  idVisiteur = '" .  $id  . "'  and  mois =  '" . $mois . "' and idEtat = 'CR'";
 		$res = $this->monPdo->query($req);
 		$laLigne = $res->fetch();
 		return $laLigne;

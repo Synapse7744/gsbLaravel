@@ -11,7 +11,7 @@ class comptableController extends Controller
 
     function selectionIdMois(){
 
-        if(session('comptable') !=null)
+        if(session('comptable') != null)
         {
             $lesVisiteurs = PdoGsb::getLesVisiteurs();
             $lesMois = PdoGsb::getLesMois();
@@ -39,16 +39,12 @@ class comptableController extends Controller
         {
             $id = $request['id'];
             $mois = $request['mois'];
-
             $numAnnee = MyDate::extraireAnnee($mois);
 		    $numMois = MyDate::extraireMois($mois);
-
             $lesVisiteurs = PdoGsb::getLesVisiteurs();
             $lesMois = PdoGsb::getLesMois();
-            
             $lesFrais = PdoGsb::getLesFraisForfait($id, $mois);
             $etatFrais = PdoGsb::getEtatFrais($id, $mois);
-
             $nom = PdoGsb::getNomVisiteur($id);
             $prenom = PdoGsb::getPrenomVisiteur($id);
 
@@ -126,10 +122,6 @@ class comptableController extends Controller
                         ->with('lesMois', $lesMois)
                         ->with('nom', $nom)
                         ->with('prenom', $prenom)
-                        ->with('fraisETP', $fraisETP)
-                        ->with('fraisNUI', $fraisNUI)
-                        ->with('fraisREP', $fraisREP)
-                        ->with('fraisKM', $fraisKM)
                         ->with('erreurs',null)
                         ->with('message',"")
                         ->with('total', $total);
@@ -147,17 +139,26 @@ class comptableController extends Controller
             $id = $request['id'];
             $mois = $request['mois'];
 
-            $ETP= $request['ETP'];
-            $KM= $request['KM'];
-            $NUI= $request['NUI'];
-            $REP= $request['REP'];
-
             $saisieETP= $request['saisieETP'];
             $saisieKM= $request['saisieKM'];
             $saisieNUI= $request['saisieNUI'];
             $saisieREP= $request['saisieREP'];
-
-
+            $res1 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'ETP', $saisieETP);
+            $res2 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'KM', $saisieKM);
+            $res3 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'NUI', $saisieNUI);
+            $res4 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'REP', $saisieREP);
+            if($res1 !=1 ){
+                $erreurs[] = "La quantité du frais Forfait Etape n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
+            }
+            if($res2 !=1 ){
+                $erreurs[] = "La quantité du frais Frais Kilométrique n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
+            }
+            if($res3 !=1 ){
+                $erreurs[] = "La quantité du frais Nuitée Hôtel n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
+            }
+            if($res4 !=1 ){
+                $erreurs[] = "La quantité du frais Repas Restaurant n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
+            }
 
             $lesVisiteurs = PdoGsb::getLesVisiteurs();
             $lesMois = PdoGsb::getLesMois();
@@ -171,6 +172,14 @@ class comptableController extends Controller
             $lesFrais = PdoGsb::getLesFraisForfait($id, $mois);
 
             $total=0;
+            $ETP=0;
+            $KM=0;
+            $NUI=0;
+            $REP=0;
+            $fraisETP = 0;
+            $fraisKM = 0;
+            $fraisREP = 0;
+            $fraisNUI = 0;
 
             
 
@@ -178,43 +187,61 @@ class comptableController extends Controller
 
             foreach($lesFrais as $leFrais)
             {
-                switch($leFrais['idfrais']){
+                switch($leFrais['idfrais'])
+                {
                     case('ETP') : 
-                        $montantETP = $leFrais['montant'] * $saisieETP;
+                        $fraisETP = $leFrais['montantFrais'];
+                        $ETP = $leFrais['quantite'];
                         break;
 
                     case('KM') :
-                        $montantKM = $leFrais['montant'] * $saisieKM;
+                        $fraisKM = $leFrais['montantFrais'];
+                        $KM = $leFrais['quantite'];
                         break;
 
                      case('REP') : 
-                        $montantREP = $leFrais['montant'] * $saisieREP;
+                        $fraisREP = $leFrais['montantFrais'];
+                        $REP = $leFrais['quantite'];
                         break;
 
                     case('NUI') :
-                        $montantNUI = $leFrais['montant'] * $saisieNUI;
+                        $fraisNUI = $leFrais['montantFrais'];
+                        $NUI = $leFrais['quantite'];
                         break;
                 }
-            }
-            $total = $montantETP + $montantKM + $montantREP + $montantNUI;
 
-            return view('recap')
-                ->with('saisieETP', $saisieETP)
-                ->with('saisieREP', $saisieREP)
-                ->with('saisieKM', $saisieKM)
-                ->with('saisieNUI', $saisieNUI)
-                ->with('total', $total)
-                ->with('id', $id)
-                ->with('mois', $mois)
-                ->with('numMois', $numMois)
-                ->with('numAnnee', $numAnnee)
-                ->with('lesVisiteurs', $lesVisiteurs)
-                ->with('lesMois', $lesMois)
-                ->with('nom', $nom)
-                ->with('prenom', $prenom)
-                ->with('erreurs',null)
-                ->with('message',"")
-                ->with('comptable',session('comptable'));
+                $total += $leFrais['montantFrais'];
+            }
+
+            if(!empty($error)){
+                return view('selectionIdMois') ->with('comptable',session('comptable'))
+                                                ->with('lesVisiteurs', $lesVisiteurs)
+                                                ->with('erreurs',$errors)
+                                                ->with('message',"")
+                                                ->with('lesMois', $lesMois);
+            }
+           
+            $message = "Modification des quantités effectuée";
+
+                        return view('recap')
+                        ->with('ETP', $ETP)
+                        ->with('REP', $REP)
+                        ->with('KM', $KM)
+                        ->with('NUI', $NUI)
+                        ->with('total', $total)
+                        ->with('id', $id)
+                        ->with('mois', $mois)
+                        ->with('numMois', $numMois)
+                        ->with('numAnnee', $numAnnee)
+                        ->with('lesVisiteurs', $lesVisiteurs)
+                        ->with('lesMois', $lesMois)
+                        ->with('nom', $nom)
+                        ->with('prenom', $prenom)
+                        ->with('erreurs',null)
+                        ->with('message',$message)
+                        ->with('comptable',session('comptable'));
+            
+            
         }
         else
         {
@@ -232,39 +259,14 @@ class comptableController extends Controller
             $id = $request['id'];
             $mois = $request['mois'];   
 
-            $saisieETP = $request['saisieETP'];
-            $saisieKM = $request['saisieKM'];
-            $saisieNUI = $request['saisieNUI'];
-            $saisieREP = $request['saisieREP'];
 
             $total =  $request['total'];
-
-            $res1 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'ETP', $saisieETP);
-            $res2 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'KM', $saisieKM);
-            $res3 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'NUI', $saisieNUI);
-            $res4 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'REP', $saisieREP);
+        
 
             $res5 = PdoGsb::modifierEtatFiche($id, $mois);
             $res6 = PdoGsb::modifierDateFiche($id, $mois);
             $res7 = PdoGsb::modifierMontantFiche($id, $mois, $total);
-
-
             
-            
-
-
-            if($res1 !=1 ){
-                $erreurs[] = "La quantité du frais Forfait Etape n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
-            }
-            if($res2 !=1 ){
-                $erreurs[] = "La quantité du frais Frais Kilométrique n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
-            }
-            if($res3 !=1 ){
-                $erreurs[] = "La quantité du frais Nuitée Hôtel n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
-            }
-            if($res4 !=1 ){
-                $erreurs[] = "La quantité du frais Repas Restaurant n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
-            }
             if($res6 !=1 ){
                 $erreurs[] = "La date de la  fiche  n'a pu etre validé, veuillez réessayer  plus tard !";
             }
@@ -279,15 +281,12 @@ class comptableController extends Controller
                                                 ->with('message',"")
                                                 ->with('lesMois', $lesMois);
             }
-            else
-            {
-                $message = "Modification effectuée";
+                $message = "Validation de la fiche de frais effectuée";
                 return view('selectionIdMois') ->with('comptable',session('comptable'))
                                                 ->with('lesVisiteurs', $lesVisiteurs)
                                                 ->with('erreurs',null)
                                                 ->with('message',$message)
                                                 ->with('lesMois', $lesMois);
-            }
         }
         else 
         {
