@@ -47,9 +47,7 @@ class comptableController extends Controller
             $etatFrais = PdoGsb::getEtatFrais($id, $mois);
             $nom = PdoGsb::getNomVisiteur($id);
             $prenom = PdoGsb::getPrenomVisiteur($id);
-
-            
-            if ($etatFrais[0] == null){
+            if ($etatFrais == null){
                 $erreurs[] = "La fiche de frais du visiteur $id pour la date $numMois / $numAnnee n'existe pas";
             }
             else
@@ -74,10 +72,7 @@ class comptableController extends Controller
             $KM=0;
             $NUI=0;
             $REP=0;
-            $fraisETP = 0;
-            $fraisKM = 0;
-            $fraisREP = 0;
-            $fraisNUI = 0;
+            
 
 
             foreach($lesFrais as $leFrais)
@@ -85,22 +80,18 @@ class comptableController extends Controller
                 switch($leFrais['idfrais'])
                 {
                     case('ETP') : 
-                        $fraisETP = $leFrais['montantFrais'];
                         $ETP = $leFrais['quantite'];
                         break;
 
                     case('KM') :
-                        $fraisKM = $leFrais['montantFrais'];
                         $KM = $leFrais['quantite'];
                         break;
 
                      case('REP') : 
-                        $fraisREP = $leFrais['montantFrais'];
                         $REP = $leFrais['quantite'];
                         break;
 
                     case('NUI') :
-                        $fraisNUI = $leFrais['montantFrais'];
                         $NUI = $leFrais['quantite'];
                         break;
                 }
@@ -143,32 +134,19 @@ class comptableController extends Controller
             $saisieKM= $request['saisieKM'];
             $saisieNUI= $request['saisieNUI'];
             $saisieREP= $request['saisieREP'];
-            $res1 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'ETP', $saisieETP);
-            $res2 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'KM', $saisieKM);
-            $res3 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'NUI', $saisieNUI);
-            $res4 = PdoGsb::majQuantiteFraisForfait($id, $mois, 'REP', $saisieREP);
-            if($res1 !=1 ){
-                $erreurs[] = "La quantité du frais Forfait Etape n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
-            }
-            if($res2 !=1 ){
-                $erreurs[] = "La quantité du frais Frais Kilométrique n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
-            }
-            if($res3 !=1 ){
-                $erreurs[] = "La quantité du frais Nuitée Hôtel n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
-            }
-            if($res4 !=1 ){
-                $erreurs[] = "La quantité du frais Repas Restaurant n'a pas pu etre mis à jour, veuillez réessayer  plus tard !";
-            }
+            
+            PdoGsb::majQuantiteFraisForfait($id, $mois, 'ETP', $saisieETP);
+            PdoGsb::majQuantiteFraisForfait($id, $mois, 'KM', $saisieKM);
+            PdoGsb::majQuantiteFraisForfait($id, $mois, 'NUI', $saisieNUI);
+            PdoGsb::majQuantiteFraisForfait($id, $mois, 'REP', $saisieREP);
 
+            
             $lesVisiteurs = PdoGsb::getLesVisiteurs();
             $lesMois = PdoGsb::getLesMois();
-
             $numAnnee = MyDate::extraireAnnee($mois);
             $numMois = MyDate::extraireMois($mois);
-            
             $nom = PdoGsb::getNomVisiteur($id);
             $prenom = PdoGsb::getPrenomVisiteur($id);
-
             $lesFrais = PdoGsb::getLesFraisForfait($id, $mois);
 
             $total=0;
@@ -176,36 +154,25 @@ class comptableController extends Controller
             $KM=0;
             $NUI=0;
             $REP=0;
-            $fraisETP = 0;
-            $fraisKM = 0;
-            $fraisREP = 0;
-            $fraisNUI = 0;
-
             
-
-            $lesFrais = PdoGsb::getLesFraisForfait($id, $mois);
 
             foreach($lesFrais as $leFrais)
             {
                 switch($leFrais['idfrais'])
                 {
                     case('ETP') : 
-                        $fraisETP = $leFrais['montantFrais'];
                         $ETP = $leFrais['quantite'];
                         break;
 
                     case('KM') :
-                        $fraisKM = $leFrais['montantFrais'];
                         $KM = $leFrais['quantite'];
                         break;
 
                      case('REP') : 
-                        $fraisREP = $leFrais['montantFrais'];
                         $REP = $leFrais['quantite'];
                         break;
 
                     case('NUI') :
-                        $fraisNUI = $leFrais['montantFrais'];
                         $NUI = $leFrais['quantite'];
                         break;
                 }
@@ -213,13 +180,7 @@ class comptableController extends Controller
                 $total += $leFrais['montantFrais'];
             }
 
-            if(!empty($error)){
-                return view('selectionIdMois') ->with('comptable',session('comptable'))
-                                                ->with('lesVisiteurs', $lesVisiteurs)
-                                                ->with('erreurs',$errors)
-                                                ->with('message',"")
-                                                ->with('lesMois', $lesMois);
-            }
+           
            
             $message = "Modification des quantités effectuée";
 
@@ -263,24 +224,11 @@ class comptableController extends Controller
             $total =  $request['total'];
         
 
-            $res5 = PdoGsb::modifierEtatFiche($id, $mois);
-            $res6 = PdoGsb::modifierDateFiche($id, $mois);
-            $res7 = PdoGsb::modifierMontantFiche($id, $mois, $total);
+            PdoGsb::modifierEtatFiche($id, $mois);
+            PdoGsb::modifierDateFiche($id, $mois);
+            PdoGsb::modifierMontantFiche($id, $mois, $total);
+
             
-            if($res6 !=1 ){
-                $erreurs[] = "La date de la  fiche  n'a pu etre validé, veuillez réessayer  plus tard !";
-            }
-            if($res7 !=1 ){
-                $erreurs[] = "Le  montant de la  fiche  n'a pu etre validé, veuillez réessayer  plus tard !";
-            }
-            
-            if(!empty($error)){
-                return view('selectionIdMois') ->with('comptable',session('comptable'))
-                                                ->with('lesVisiteurs', $lesVisiteurs)
-                                                ->with('erreurs',$errors)
-                                                ->with('message',"")
-                                                ->with('lesMois', $lesMois);
-            }
                 $message = "Validation de la fiche de frais effectuée";
                 return view('selectionIdMois') ->with('comptable',session('comptable'))
                                                 ->with('lesVisiteurs', $lesVisiteurs)

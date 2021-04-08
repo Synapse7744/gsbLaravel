@@ -113,7 +113,8 @@ class PdoGsb{
 		$req = "update lignefraisforfait set lignefraisforfait.quantite = '" . $quantite . "'
 		where lignefraisforfait.idvisiteur = '" . $idVisiteur  .  "' and lignefraisforfait.mois = '" .  $mois .  "'
 		and lignefraisforfait.idfraisforfait = '" . $idFrais . "'";
-		$this->monPdo->exec($req);
+		$res = $this->monPdo->exec($req);
+		return $res;
 	}
 
 	//On mets à jour l'état de la fiche de frais
