@@ -47,7 +47,7 @@ class comptableController extends Controller
             $etatFrais = PdoGsb::getEtatFrais($id, $mois);
             $nom = PdoGsb::getNomVisiteur($id);
             $prenom = PdoGsb::getPrenomVisiteur($id);
-            if ($etatFrais == null){
+            if ($etatFrais[0] == null){
                 $erreurs[] = "La fiche de frais du visiteur $id pour la date $numMois / $numAnnee n'existe pas";
             }
             else
@@ -147,6 +147,7 @@ class comptableController extends Controller
             $numMois = MyDate::extraireMois($mois);
             $nom = PdoGsb::getNomVisiteur($id);
             $prenom = PdoGsb::getPrenomVisiteur($id);
+            
             $lesFrais = PdoGsb::getLesFraisForfait($id, $mois);
 
             $total=0;
