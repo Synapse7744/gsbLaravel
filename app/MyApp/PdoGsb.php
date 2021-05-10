@@ -118,25 +118,25 @@ class PdoGsb{
 	}
 
 	//On mets à jour l'état de la fiche de frais
-	public function modifierEtatFiche($id, $mois){
-		$req ="update fichefrais set idEtat = 'VA' where idVisiteur ='" . $id . "' and mois ='" . $mois .  "'";
+	public function modifierFiche($id, $mois, $total){
+		$req ="update fichefrais set idEtat = 'VA', dateModif = DATE(NOW()), montantValide = '" .  $total . "' where idVisiteur ='" . $id . "' and mois ='" . $mois .  "'";
 		$res = $this->monPdo->exec($req);
 		return $res;
 	}
 
-	//On mets à jour la date de la fiche de frais avec DATE(NOW())
+	/*//On mets à jour la date de la fiche de frais avec DATE(NOW())
 	public function modifierDateFiche($id, $mois){
 		$req ="update fichefrais set dateModif = DATE(NOW()) where idVisiteur ='" . $id . "' and mois ='" . $mois .  "'";
 		$res = $this->monPdo->exec($req);
 		return $res;
-	}
+	}*/
 
 	//On mets à jour le total de la fiche de frais
-	public function modifierMontantFiche($id, $mois,  $total){
+	/*public function modifierMontantFiche($id, $mois,  $total){
 		$req ="update fichefrais set montantValide = '" .  $total . "' where idVisiteur ='" . $id . "' and mois ='" . $mois .  "'";
 		$res = $this->monPdo->exec($req);
 		return $res;
-	}
+	}*/
 	
 	
 /**

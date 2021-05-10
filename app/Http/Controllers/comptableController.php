@@ -135,6 +135,8 @@ class comptableController extends Controller
             $saisieNUI= $request['saisieNUI'];
             $saisieREP= $request['saisieREP'];
             
+            
+
             PdoGsb::majQuantiteFraisForfait($id, $mois, 'ETP', $saisieETP);
             PdoGsb::majQuantiteFraisForfait($id, $mois, 'KM', $saisieKM);
             PdoGsb::majQuantiteFraisForfait($id, $mois, 'NUI', $saisieNUI);
@@ -156,7 +158,6 @@ class comptableController extends Controller
             $NUI=0;
             $REP=0;
             
-
             foreach($lesFrais as $leFrais)
             {
                 switch($leFrais['idfrais'])
@@ -181,7 +182,6 @@ class comptableController extends Controller
                 $total += $leFrais['montantFrais'];
             }
 
-           
            
             $message = "Modification des quantités effectuée";
 
@@ -225,9 +225,9 @@ class comptableController extends Controller
             $total =  $request['total'];
         
 
-            PdoGsb::modifierEtatFiche($id, $mois);
-            PdoGsb::modifierDateFiche($id, $mois);
-            PdoGsb::modifierMontantFiche($id, $mois, $total);
+            PdoGsb::modifierFiche($id, $mois, $total);
+            //PdoGsb::modifierDateFiche($id, $mois);
+            //PdoGsb::modifierMontantFiche($id, $mois, $total);
 
             
                 $message = "Validation de la fiche de frais effectuée";
