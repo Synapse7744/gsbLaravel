@@ -15,13 +15,17 @@ class connexionController extends Controller
         $mdp = $request['mdp'];
         $visiteur = PdoGsb::getInfosVisiteur($login,$mdp);
         $comptable = PdoGsb::getInfosComptable($login,$mdp);
+
         if(!is_array($visiteur)){
+            
             if(!is_array($comptable)){
-            $erreurs[] = "Login ou mot de passe incorrect(s)";
-            return view('connexion')->with('erreurs',$erreurs);
-            }else{
+                $erreurs[] = "Login ou mot de passe incorrect(s)";
+                return view('connexion')->with('erreurs',$erreurs);
+            }
+            else
+            {
                 session(['comptable' => $comptable]);
-            return view('sommaireComptable')->with('comptable',session('comptable'));
+                return view('sommaireComptable')->with('comptable',session('comptable'));
             }
         }
         else
